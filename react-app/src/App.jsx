@@ -27,7 +27,7 @@ function App() {
   <br />
   he likes : {arr[1]}
 </p>
-<Body></Body>
+<Body>h</Body>
 
    </>
   )
