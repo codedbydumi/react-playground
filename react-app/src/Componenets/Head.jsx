@@ -1,4 +1,5 @@
 import React from 'react'
+import './home/Main.css'
 
 function Head() {
   return (

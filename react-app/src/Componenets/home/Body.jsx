@@ -1,4 +1,5 @@
 import React, { useState } from 'react'; // ✅ import useState here
+import './Main.css'
 
 function Body() {
   const [items, setItems] = useState(['Apple', 'Banana', 'Orange']);
@@ -12,9 +13,10 @@ function Body() {
   };
 
   return (
-    <main style={{ padding: '20px' }}>
+    <main >
 
       <h2>Fruit List</h2>
+   
     <button onClick={handleAdd} style={{ marginLeft: '10px' }}>
         Add
       </button>
