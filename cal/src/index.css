@@ -34,9 +34,10 @@
 }
 
 .previous-operand {
-  font-size: 16px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.6);
   margin-bottom: 5px;
+  min-height: 20px;
 }
 
 .current-operand {
@@ -44,6 +45,7 @@
   font-weight: bold;
   color: #00ff88;
   text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  word-break: break-all;
 }
 
 .buttons {
@@ -62,6 +64,12 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+  margin-bottom: 12px;
+}
+
+.clear-section {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
 button {
@@ -123,11 +131,20 @@ button:active {
   background: linear-gradient(145deg, #4caf50, #45a049);
   color: white;
   box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
-  grid-row: span 2;
 }
 
 .equals-btn:hover {
   background: linear-gradient(145deg, #66bb6a, #4caf50);
+}
+
+.clear-btn {
+  background: linear-gradient(145deg, #f44336, #d32f2f);
+  color: white;
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+.clear-btn:hover {
+  background: linear-gradient(145deg, #ef5350, #f44336);
 }
 
 /* Ripple effect */
@@ -166,6 +183,6 @@ button:active::before {
   }
   
   .previous-operand {
-    font-size: 14px;
+    font-size: 12px;
   }
 }
