@@ -25,10 +25,16 @@ const TodoForm = ({ onAddTodo }) => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyPress={handleKeyPress}
-        placeholder="Add a new todo..."
+        placeholder="What needs to be done?"
         className="todo-input"
+        maxLength={200}
       />
-      <button onClick={handleSubmit} className="add-btn">
+      <button 
+        onClick={handleSubmit} 
+        className="add-btn"
+        disabled={!inputValue.trim()}
+        aria-label="Add todo"
+      >
         <Plus size={20} />
       </button>
     </div>

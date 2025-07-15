@@ -1,11 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-import { useLocalStorage } from './hooks/useLocalStorage';
-import ThemeToggle from './components/ThemeToggle';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
-import FilterButtons from './components/FilterButtons';
+import ThemeToggle from './components/ThemeToggle';
+import useLocalStorage from './hooks/useLocalStorage';
+import './App.css';
 
+// Filter Buttons Component
+const FilterButtons = ({ currentFilter, onFilterChange }) => {
+  const filters = ['all', 'active', 'completed'];
+
+  return (
+    <div className="filter-buttons">
+      {filters.map(filter => (
+        <button
+          key={filter}
+          onClick={() => onFilterChange(filter)}
+          className={`filter-btn ${currentFilter === filter ? 'active' : ''}`}
+        >
+          {filter.charAt(0).toUpperCase() + filter.slice(1)}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// Stats Component
+const Stats = ({ todos }) => {
+  const stats = {
+    total: todos.length,
+    active: todos.filter(todo => !todo.completed).length,
+    completed: todos.filter(todo => todo.completed).length
+  };
+
+  return (
+    <div className="stats">
+      <div className="stat-card">
+        <span className="stat-number">{stats.total}</span>
+        <span className="stat-label">Total</span>
+      </div>
+      <div className="stat-card">
+        <span className="stat-number">{stats.active}</span>
+        <span className="stat-label">Active</span>
+      </div>
+      <div className="stat-card">
+        <span className="stat-number">{stats.completed}</span>
+        <span className="stat-label">Completed</span>
+      </div>
+    </div>
+  );
+};
+
+// Main App Component
 const App = () => {
   const [todos, setTodos] = useLocalStorage('todos', []);
   const [theme, setTheme] = useLocalStorage('theme', 'light');
@@ -46,11 +91,11 @@ const App = () => {
     ));
   };
 
-  const stats = {
-    total: todos.length,
-    active: todos.filter(todo => !todo.completed).length,
-    completed: todos.filter(todo => todo.completed).length
-  };
+  const filteredTodos = todos.filter(todo => {
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
+    return true;
+  });
 
   return (
     <div className="app">
@@ -62,20 +107,16 @@ const App = () => {
 
         <TodoForm onAddTodo={addTodo} />
 
-        <div className="stats">
-          <span>Total: {stats.total}</span>
-          <span>Active: {stats.active}</span>
-          <span>Completed: {stats.completed}</span>
-        </div>
+        <Stats todos={todos} />
 
         <FilterButtons currentFilter={filter} onFilterChange={setFilter} />
 
         <TodoList
-          todos={todos}
+          todos={filteredTodos}
+          filter={filter}
           onToggle={toggleTodo}
           onDelete={deleteTodo}
           onEdit={editTodo}
-          filter={filter}
         />
       </div>
     </div>

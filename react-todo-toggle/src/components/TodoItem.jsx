@@ -6,7 +6,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }) => {
   const [editValue, setEditValue] = useState(todo.text);
 
   const handleEdit = () => {
-    if (isEditing && editValue.trim()) {
+    if (isEditing && editValue.trim() && editValue.trim() !== todo.text) {
       onEdit(todo.id, editValue.trim());
     }
     setIsEditing(!isEditing);
@@ -20,8 +20,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }) => {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleEdit();
-    }
-    if (e.key === 'Escape') {
+    } else if (e.key === 'Escape') {
       handleCancel();
     }
   };
@@ -41,8 +40,10 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }) => {
           type="text"
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
-          className="edit-input"
           onKeyPress={handleKeyPress}
+          onBlur={handleCancel}
+          className="edit-input"
+          maxLength={200}
           autoFocus
         />
       ) : (
@@ -52,19 +53,35 @@ const TodoItem = ({ todo, onToggle, onDelete, onEdit }) => {
       <div className="todo-actions">
         {isEditing ? (
           <>
-            <button onClick={handleEdit} className="save-btn">
+            <button 
+              onClick={handleEdit} 
+              className="save-btn"
+              aria-label="Save changes"
+            >
               <Check size={16} />
             </button>
-            <button onClick={handleCancel} className="cancel-btn">
+            <button 
+              onClick={handleCancel} 
+              className="cancel-btn"
+              aria-label="Cancel editing"
+            >
               <X size={16} />
             </button>
           </>
         ) : (
           <>
-            <button onClick={() => setIsEditing(true)} className="edit-btn">
+            <button 
+              onClick={() => setIsEditing(true)} 
+              className="edit-btn"
+              aria-label="Edit todo"
+            >
               <Edit2 size={16} />
             </button>
-            <button onClick={() => onDelete(todo.id)} className="delete-btn">
+            <button 
+              onClick={() => onDelete(todo.id)} 
+              className="delete-btn"
+              aria-label="Delete todo"
+            >
               <Trash2 size={16} />
             </button>
           </>
