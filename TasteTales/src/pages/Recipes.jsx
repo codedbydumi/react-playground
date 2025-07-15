@@ -6,13 +6,11 @@ import RecipeCard from '../components/recipe/RecipeCard';
 import FilterSidebar from '../components/recipe/FilterSidebar';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
-import { useApp } from '../context/AppContext';
-import { getRecipes, searchRecipes } from '../services/api';
+import { mockRecipes } from '../data/mockRecipes';
 
 const Recipes = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { state, actions } = useApp();
   
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +20,12 @@ const Recipes = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecipes, setTotalRecipes] = useState(0);
+  const [filters, setFilters] = useState({
+    category: '',
+    difficulty: '',
+    cookingTime: '',
+    dietary: []
+  });
   
   const recipesPerPage = 12;
 
@@ -35,46 +39,70 @@ const Recipes = () => {
         const sort = searchParams.get('sort') || 'newest';
         
         setSortBy(sort);
-        actions.setSearchQuery(searchQuery);
         
-        const filters = {
+        const newFilters = {
           category,
           difficulty: searchParams.get('difficulty') || '',
           cookingTime: searchParams.get('cookingTime') || '',
           dietary: searchParams.get('dietary')?.split(',').filter(Boolean) || []
         };
         
-        actions.setFilters(filters);
+        setFilters(newFilters);
         
-        let result;
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Use mock data
+        let filteredRecipes = [...mockRecipes];
+        
+        // Apply search filter
         if (searchQuery) {
-          result = await searchRecipes(searchQuery, {
-            ...filters,
-            sort,
-            page: currentPage,
-            limit: recipesPerPage
-          });
-        } else {
-          result = await getRecipes({
-            ...filters,
-            sort,
-            page: currentPage,
-            limit: recipesPerPage
-          });
+          filteredRecipes = filteredRecipes.filter(recipe =>
+            recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            recipe.description.toLowerCase().includes(searchQuery.toLowerCase())
+          );
         }
         
-        setRecipes(result.recipes);
-        setTotalPages(result.totalPages);
-        setTotalRecipes(result.total);
+        // Apply category filter
+        if (category) {
+          filteredRecipes = filteredRecipes.filter(recipe =>
+            recipe.category.toLowerCase() === category.toLowerCase()
+          );
+        }
+        
+        // Apply difficulty filter
+        if (newFilters.difficulty) {
+          filteredRecipes = filteredRecipes.filter(recipe =>
+            recipe.difficulty === newFilters.difficulty
+          );
+        }
+        
+        // Apply cooking time filter
+        if (newFilters.cookingTime) {
+          const maxTime = parseInt(newFilters.cookingTime);
+          filteredRecipes = filteredRecipes.filter(recipe =>
+            recipe.totalTime <= maxTime
+          );
+        }
+        
+        // Pagination
+        const startIndex = (currentPage - 1) * recipesPerPage;
+        const endIndex = startIndex + recipesPerPage;
+        const paginatedRecipes = filteredRecipes.slice(startIndex, endIndex);
+        
+        setRecipes(paginatedRecipes);
+        setTotalRecipes(filteredRecipes.length);
+        setTotalPages(Math.ceil(filteredRecipes.length / recipesPerPage));
+        
       } catch (error) {
-        actions.setError('Failed to load recipes');
+        console.error('Failed to load recipes:', error);
       } finally {
         setLoading(false);
       }
     };
 
     loadRecipes();
-  }, [searchParams, currentPage, actions]);
+  }, [searchParams, currentPage]);
 
   const handleSearch = (query) => {
     const newParams = new URLSearchParams(searchParams);
@@ -94,7 +122,9 @@ const Recipes = () => {
       const currentDietary = searchParams.get('dietary')?.split(',').filter(Boolean) || [];
       let newDietary;
       
-      if (currentDietary.includes(value)) {
+      if (Array.isArray(value)) {
+        newDietary = value;
+      } else if (currentDietary.includes(value)) {
         newDietary = currentDietary.filter(item => item !== value);
       } else {
         newDietary = [...currentDietary, value];
@@ -156,7 +186,7 @@ const Recipes = () => {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-display font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Recipes
             </h1>
             <p className="text-gray-600">
@@ -186,7 +216,7 @@ const Recipes = () => {
               <select
                 value={sortBy}
                 onChange={(e) => handleSortChange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {sortOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -198,13 +228,13 @@ const Recipes = () => {
               <div className="flex border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                  className={`p-2 ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
                 >
                   <Grid className="h-5 w-5" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 ${viewMode === 'list' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                  className={`p-2 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
                 >
                   <List className="h-5 w-5" />
                 </button>
@@ -216,17 +246,17 @@ const Recipes = () => {
             <div className="mt-4 flex items-center gap-2">
               <span className="text-sm text-gray-500">Active filters:</span>
               {searchParams.get('search') && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded">
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   Search: {searchParams.get('search')}
                 </span>
               )}
               {searchParams.get('category') && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded">
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   Category: {searchParams.get('category')}
                 </span>
               )}
               {searchParams.get('difficulty') && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded">
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   Difficulty: {searchParams.get('difficulty')}
                 </span>
               )}
@@ -248,7 +278,7 @@ const Recipes = () => {
           {/* Sidebar Filters */}
           <div className={`${showFilters ? 'block' : 'hidden'} lg:block lg:w-64 flex-shrink-0`}>
             <FilterSidebar
-              filters={state.filters}
+              filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={clearAllFilters}
             />
@@ -257,7 +287,7 @@ const Recipes = () => {
           {/* Main Content */}
           <div className="flex-1">
             {loading ? (
-              <Loading />
+              <Loading message="Loading delicious recipes..." />
             ) : recipes.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">

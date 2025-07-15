@@ -1,172 +1,144 @@
 import React from 'react';
-import { Filter, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import Button from '../common/Button';
 
-const FilterSidebar = ({ filters, onFilterChange, onReset, isOpen, onClose }) => {
-  const cuisineOptions = [
-    'Italian', 'Mexican', 'Asian', 'Mediterranean', 
-    'American', 'French', 'Indian', 'Thai'
+const FilterSidebar = ({ filters, onFilterChange, onClearFilters }) => {
+  const categories = [
+    'breakfast', 'lunch', 'dinner', 'dessert', 'snack', 'appetizer'
   ];
 
-  const difficultyOptions = ['easy', 'medium', 'hard'];
-  
-  const timeOptions = [
-    { label: 'Under 30 min', value: '30' },
-    { label: 'Under 1 hour', value: '60' },
-    { label: '1-2 hours', value: '120' },
-    { label: 'Over 2 hours', value: '121' }
+  const difficulties = [
+    { value: 'easy', label: 'Easy' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'hard', label: 'Hard' }
+  ];
+
+  const cookingTimes = [
+    { value: '15', label: 'Under 15 min' },
+    { value: '30', label: 'Under 30 min' },
+    { value: '60', label: 'Under 1 hour' },
+    { value: '120', label: 'Under 2 hours' }
   ];
 
   const dietaryOptions = [
-    'Vegetarian', 'Vegan', 'Gluten-Free', 
-    'Dairy-Free', 'Keto', 'Paleo'
+    { value: 'vegetarian', label: 'Vegetarian' },
+    { value: 'vegan', label: 'Vegan' },
+    { value: 'gluten-free', label: 'Gluten Free' },
+    { value: 'dairy-free', label: 'Dairy Free' },
+    { value: 'keto', label: 'Keto' },
+    { value: 'paleo', label: 'Paleo' }
   ];
 
-  const handleChange = (key, value) => {
-    onFilterChange({ ...filters, [key]: value });
+  const handleDietaryChange = (value) => {
+    const currentDietary = filters.dietary || [];
+    const newDietary = currentDietary.includes(value)
+      ? currentDietary.filter(item => item !== value)
+      : [...currentDietary, value];
+    
+    onFilterChange('dietary', newDietary);
   };
-
-  const handleDietaryToggle = (option) => {
-    const current = filters.dietary || [];
-    const updated = current.includes(option)
-      ? current.filter(d => d !== option)
-      : [...current, option];
-    handleChange('dietary', updated);
-  };
-
-  const containerClass = isOpen 
-    ? 'fixed lg:sticky lg:top-20 inset-y-0 left-0 z-40 w-80 lg:w-full transform translate-x-0' 
-    : 'fixed lg:sticky lg:top-20 inset-y-0 left-0 z-40 w-80 lg:w-full transform -translate-x-full lg:translate-x-0';
 
   return (
-    <>
-      {/* Mobile Overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={onClose}
-        />
-      )}
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+        <Button
+          onClick={onClearFilters}
+          variant="ghost"
+          size="small"
+          className="text-gray-500 hover:text-gray-700"
+        >
+          Clear All
+        </Button>
+      </div>
 
-      {/* Sidebar */}
-      <div className={`${containerClass} transition-transform duration-300 ease-in-out`}>
-        <div className="bg-white h-full lg:h-auto rounded-lg shadow-lg p-6 overflow-y-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <Filter className="h-5 w-5 mr-2 text-primary-600" />
-              <h2 className="text-xl font-semibold">Filters</h2>
-            </div>
-            <button 
-              onClick={onClose}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-full"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          {/* Cuisine Filter */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Cuisine</h3>
-            <select
-              value={filters.cuisine || ''}
-              onChange={(e) => handleChange('cuisine', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="">All Cuisines</option>
-              {cuisineOptions.map(cuisine => (
-                <option key={cuisine} value={cuisine.toLowerCase()}>
-                  {cuisine}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Difficulty Filter */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Difficulty</h3>
-            <div className="space-y-2">
-              {difficultyOptions.map(level => (
-                <label key={level} className="flex items-center">
-                  <input
-                    type="radio"
-                    name="difficulty"
-                    value={level}
-                    checked={filters.difficulty === level}
-                    onChange={(e) => handleChange('difficulty', e.target.value)}
-                    className="mr-2 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="capitalize">{level}</span>
-                </label>
-              ))}
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="difficulty"
-                  value=""
-                  checked={!filters.difficulty}
-                  onChange={(e) => handleChange('difficulty', '')}
-                  className="mr-2 text-primary-600 focus:ring-primary-500"
-                />
-                <span>Any Difficulty</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Time Filter */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Cooking Time</h3>
-            <select
-              value={filters.time || ''}
-              onChange={(e) => handleChange('time', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="">Any Time</option>
-              {timeOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Dietary Restrictions */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Dietary Restrictions</h3>
-            <div className="space-y-2">
-              {dietaryOptions.map(option => (
-                <label key={option} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={(filters.dietary || []).includes(option.toLowerCase())}
-                    onChange={() => handleDietaryToggle(option.toLowerCase())}
-                    className="mr-2 text-primary-600 focus:ring-primary-500 rounded"
-                  />
-                  <span>{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-2">
-            <Button 
-              onClick={onReset}
-              variant="outline"
-              fullWidth
-            >
-              Reset Filters
-            </Button>
-            <Button 
-              onClick={onClose}
-              fullWidth
-              className="lg:hidden"
-            >
-              Apply Filters
-            </Button>
-          </div>
+      {/* Category Filter */}
+      <div className="mb-6">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Category</h4>
+        <div className="space-y-2">
+          {categories.map((category) => (
+            <label key={category} className="flex items-center">
+              <input
+                type="radio"
+                name="category"
+                value={category}
+                checked={filters.category === category}
+                onChange={(e) => onFilterChange('category', e.target.value)}
+                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <span className="ml-2 text-sm text-gray-700 capitalize">
+                {category}
+              </span>
+            </label>
+          ))}
         </div>
       </div>
-    </>
+
+      {/* Difficulty Filter */}
+      <div className="mb-6">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Difficulty</h4>
+        <div className="space-y-2">
+          {difficulties.map((difficulty) => (
+            <label key={difficulty.value} className="flex items-center">
+              <input
+                type="radio"
+                name="difficulty"
+                value={difficulty.value}
+                checked={filters.difficulty === difficulty.value}
+                onChange={(e) => onFilterChange('difficulty', e.target.value)}
+                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <span className="ml-2 text-sm text-gray-700">
+                {difficulty.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Cooking Time Filter */}
+      <div className="mb-6">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Cooking Time</h4>
+        <div className="space-y-2">
+          {cookingTimes.map((time) => (
+            <label key={time.value} className="flex items-center">
+              <input
+                type="radio"
+                name="cookingTime"
+                value={time.value}
+                checked={filters.cookingTime === time.value}
+                onChange={(e) => onFilterChange('cookingTime', e.target.value)}
+                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <span className="ml-2 text-sm text-gray-700">
+                {time.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Dietary Restrictions */}
+      <div className="mb-6">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Dietary</h4>
+        <div className="space-y-2">
+          {dietaryOptions.map((option) => (
+            <label key={option.value} className="flex items-center">
+              <input
+                type="checkbox"
+                value={option.value}
+                checked={filters.dietary?.includes(option.value) || false}
+                onChange={() => handleDietaryChange(option.value)}
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="ml-2 text-sm text-gray-700">
+                {option.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

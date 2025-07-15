@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Clock, Users, ChefHat, Star, Heart, Bookmark, Share2, 
-  ArrowLeft, Plus, Minus, Print, MessageSquare 
+  ArrowLeft, Plus, Minus, Printer, MessageSquare 
 } from 'lucide-react';
 import IngredientList from '../components/recipe/IngredientList';
 import Button from '../components/common/Button';
@@ -219,7 +219,7 @@ const RecipeDetail = () => {
               <Button onClick={handleShare} variant="outline" icon={Share2}>
                 Share
               </Button>
-              <Button onClick={handlePrint} variant="outline" icon={Print}>
+              <Button onClick={handlePrint} variant="outline" icon={Printer}>
                 Print
               </Button>
             </div>

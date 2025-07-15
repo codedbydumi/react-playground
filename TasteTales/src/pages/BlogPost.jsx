@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, User, Clock, Share2, Heart, 
-  MessageSquare, Tag, Eye, Facebook, Twitter, Link as LinkIcon 
+  MessageSquare, Tag, Eye, Facebook, Twitter, LinkIcon 
 } from 'lucide-react';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
