@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, MessageSquare, Send, Clock, Globe } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageSquare, Send, Clock, Share2 } from 'lucide-react';
 import Button from '../components/common/Button';
 import { useApp } from '../context/AppContext';
 
@@ -65,7 +65,7 @@ const Contact = () => {
       description: 'Our headquarters and test kitchen'
     },
     {
-      icon: Globe,
+      icon: Share2,
       title: 'Social Media',
       details: '@recipefinder',
       description: 'Follow us on all major platforms'
