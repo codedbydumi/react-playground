@@ -9,7 +9,21 @@ import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import RecipeCard from '../components/recipe/RecipeCard';
 import { useApp } from '../context/AppContext';
+// At the top of RecipeDetail.jsx, make sure you have:
 import { getRecipeById, getRelatedRecipes, rateRecipe } from '../services/api';
+
+// Utility function to clean up image URLs
+const getCleanImageUrl = (url) => {
+  if (!url) return 'https://via.placeholder.com/800x600?text=Recipe+Image';
+  
+  // If it's an Unsplash URL, ensure it has proper parameters
+  if (url.includes('unsplash.com')) {
+    const baseUrl = url.split('?')[0];
+    return `${baseUrl}?w=800&q=80&fit=crop&auto=format`;
+  }
+  
+  return url;
+};
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -135,9 +149,12 @@ const RecipeDetail = () => {
       <div className="relative">
         <div className="aspect-video md:aspect-[21/9] overflow-hidden">
           <img
-            src={recipe.image}
+            src={getCleanImageUrl(recipe.image)}
             alt={recipe.title}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/800x600?text=Recipe+Image';
+            }}
           />
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
@@ -362,7 +379,9 @@ const RecipeDetail = () => {
                             </div>
                           </div>
                         </div>
-                      ))}
+                      )) || (
+                        <p className="text-gray-500">No reviews yet. Be the first to review this recipe!</p>
+                      )}
                     </div>
                   </div>
                 )}

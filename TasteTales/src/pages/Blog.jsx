@@ -6,16 +6,14 @@ import BlogCard from '../components/blog/BlogCard';
 import BlogSidebar from '../components/blog/BlogSidebar';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
-import { useApp } from '../context/AppContext';
-import { getBlogPosts, searchBlogPosts, getBlogCategories, getFeaturedPosts } from '../services/api';
+import { mockBlogPosts, blogCategories, popularTags, featuredPosts } from '../data/mockBlogPosts';
 
 const Blog = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { state, actions } = useApp();
   
   const [posts, setPosts] = useState([]);
-  const [featuredPosts, setFeaturedPosts] = useState([]);
+  const [featuredPostsData, setFeaturedPostsData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,43 +35,78 @@ const Blog = () => {
         
         setSortBy(sort);
         
-        const [postsResult, categoriesData, featuredData] = await Promise.all([
-          searchQuery 
-            ? searchBlogPosts(searchQuery, {
-                category,
-                tag,
-                sort,
-                page: currentPage,
-                limit: postsPerPage
-              })
-            : getBlogPosts({
-                category,
-                tag,
-                sort,
-                page: currentPage,
-                limit: postsPerPage
-              }),
-          getBlogCategories(),
-          currentPage === 1 ? getFeaturedPosts(3) : Promise.resolve([])
-        ]);
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        setPosts(postsResult.posts);
-        setTotalPages(postsResult.totalPages);
-        setTotalPosts(postsResult.total);
-        setCategories(categoriesData);
+        // Filter posts based on search parameters
+        let filteredPosts = [...mockBlogPosts];
         
-        if (currentPage === 1) {
-          setFeaturedPosts(featuredData);
+        // Apply search filter
+        if (searchQuery) {
+          filteredPosts = filteredPosts.filter(post =>
+            post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.content.toLowerCase().includes(searchQuery.toLowerCase())
+          );
         }
+        
+        // Apply category filter
+        if (category && category !== 'all') {
+          filteredPosts = filteredPosts.filter(post =>
+            post.category.toLowerCase() === category.toLowerCase()
+          );
+        }
+        
+        // Apply tag filter
+        if (tag) {
+          filteredPosts = filteredPosts.filter(post =>
+            post.tags?.some(postTag => postTag.toLowerCase().includes(tag.toLowerCase()))
+          );
+        }
+        
+        // Apply sorting
+        switch (sort) {
+          case 'popular':
+            filteredPosts.sort((a, b) => (b.views || 0) - (a.views || 0));
+            break;
+          case 'trending':
+            filteredPosts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            break;
+          case 'oldest':
+            filteredPosts.sort((a, b) => new Date(a.date) - new Date(b.date));
+            break;
+          case 'newest':
+          default:
+            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            break;
+        }
+        
+        // Pagination
+        const startIndex = (currentPage - 1) * postsPerPage;
+        const endIndex = startIndex + postsPerPage;
+        const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+        
+        setPosts(paginatedPosts);
+        setTotalPosts(filteredPosts.length);
+        setTotalPages(Math.ceil(filteredPosts.length / postsPerPage));
+        setCategories(blogCategories);
+        
+        // Set featured posts only on first page
+        if (currentPage === 1 && !searchQuery && !category && !tag) {
+          setFeaturedPostsData(featuredPosts);
+        } else {
+          setFeaturedPostsData([]);
+        }
+        
       } catch (error) {
-        actions.setError('Failed to load blog posts');
+        console.error('Failed to load blog posts:', error);
       } finally {
         setLoading(false);
       }
     };
 
     loadBlogData();
-  }, [searchParams, currentPage, actions]);
+  }, [searchParams, currentPage]);
 
   const handleSearch = (query) => {
     const newParams = new URLSearchParams(searchParams);
@@ -138,11 +171,7 @@ const Blog = () => {
     { value: 'oldest', label: 'Oldest First' }
   ];
 
-  const recentPosts = posts.slice(0, 5);
-  const popularTags = [
-    'Cooking Tips', 'Healthy Eating', 'Quick Meals', 'Baking', 'Seasonal',
-    'Vegetarian', 'Meal Prep', 'Kitchen Tools', 'International', 'Desserts'
-  ];
+  const recentPosts = mockBlogPosts.slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -150,7 +179,7 @@ const Blog = () => {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-display font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Culinary Blog
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -171,7 +200,7 @@ const Blog = () => {
               <select
                 value={sortBy}
                 onChange={(e) => handleSortChange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {sortOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -186,17 +215,17 @@ const Blog = () => {
             <div className="mt-4 flex items-center gap-2 justify-center">
               <span className="text-sm text-gray-500">Active filters:</span>
               {searchParams.get('search') && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded">
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   Search: {searchParams.get('search')}
                 </span>
               )}
               {searchParams.get('category') && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded">
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   Category: {searchParams.get('category')}
                 </span>
               )}
               {searchParams.get('tag') && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded">
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   Tag: {searchParams.get('tag')}
                 </span>
               )}
@@ -215,17 +244,17 @@ const Blog = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Featured Posts */}
-        {currentPage === 1 && featuredPosts.length > 0 && !hasActiveFilters() && (
+        {currentPage === 1 && featuredPostsData.length > 0 && !hasActiveFilters() && (
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <TrendingUp className="h-6 w-6 text-primary-600" />
-              <h2 className="text-2xl font-display font-bold text-gray-900">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
+              <h2 className="text-2xl font-bold text-gray-900">
                 Featured Posts
               </h2>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredPosts.map((post) => (
+              {featuredPostsData.map((post) => (
                 <BlogCard
                   key={post.id}
                   post={post}
@@ -256,7 +285,7 @@ const Blog = () => {
           <div className="lg:col-span-3 lg:order-1">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-display font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900">
                   {hasActiveFilters() ? 'Search Results' : 'Latest Posts'}
                 </h2>
                 <p className="text-gray-600 mt-1">
@@ -266,7 +295,7 @@ const Blog = () => {
             </div>
 
             {loading ? (
-              <Loading />
+              <Loading message="Loading amazing content..." />
             ) : posts.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">
@@ -347,21 +376,21 @@ const Blog = () => {
       </div>
 
       {/* Newsletter Section */}
-      <section className="bg-primary-600 py-16 mt-16">
+      <section className="bg-blue-600 py-16 mt-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-display font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-white mb-4">
             Stay Updated with Our Latest Posts
           </h2>
-          <p className="text-xl text-primary-100 mb-8">
+          <p className="text-xl text-blue-100 mb-8">
             Get weekly cooking tips, recipes, and culinary insights delivered to your inbox
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg border border-primary-500 focus:outline-none focus:ring-2 focus:ring-white"
+              className="flex-1 px-4 py-3 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-white"
             />
-            <Button className="bg-accent-500 hover:bg-accent-600 text-white">
+            <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
               Subscribe
             </Button>
           </div>

@@ -27,10 +27,10 @@ export const mockBlogPosts = [
       <h2>Safety Tips</h2>
       <p>Always keep your knives sharp - dull knives are more dangerous than sharp ones. Clean and store them properly, and never try to catch a falling knife.</p>
     `,
-    image: "/api/placeholder/800/400",
+    image: "https://images.unsplash.com/photo-1594736797933-d0d3847d7d2d?w=800&h=400&fit=crop",
     author: "Chef Maria Rodriguez",
     authorBio: "Head chef with 15 years of culinary experience, specializing in technique education.",
-    authorImage: "/api/placeholder/100/100",
+    authorImage: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=100&h=100&fit=crop&crop=face",
     date: "2024-01-15",
     readTime: "8 min read",
     category: "Techniques",
@@ -48,7 +48,7 @@ export const mockBlogPosts = [
       {
         id: 1,
         author: "FoodLover92",
-        authorImage: "/api/placeholder/50/50",
+        authorImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
         content: "This really helped me improve my chopping technique! The claw grip was a game-changer.",
         date: "2024-01-16",
         likes: 5,
@@ -57,7 +57,7 @@ export const mockBlogPosts = [
       {
         id: 2,
         author: "HomeCookJenny",
-        authorImage: "/api/placeholder/50/50",
+        authorImage: "https://images.unsplash.com/photo-1494790108755-2616b612b3e2?w=50&h=50&fit=crop&crop=face",
         content: "Great tips! I've been cooking for years but learned something new about knife safety.",
         date: "2024-01-17",
         likes: 3,
@@ -65,7 +65,7 @@ export const mockBlogPosts = [
           {
             id: 3,
             author: "Chef Maria Rodriguez",
-            authorImage: "/api/placeholder/50/50",
+            authorImage: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=50&h=50&fit=crop&crop=face",
             content: "Thanks Jenny! It's always great when experienced cooks pick up new tips.",
             date: "2024-01-17",
             likes: 2
@@ -93,10 +93,10 @@ export const mockBlogPosts = [
       <h2>The Finishing Touch</h2>
       <p>Never rinse pasta unless you're making a cold salad. Instead, transfer hot pasta directly to your sauce and toss with a splash of that starchy pasta water for the perfect consistency.</p>
     `,
-    image: "/api/placeholder/800/400",
+    image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d946?w=800&h=400&fit=crop",
     author: "Dr. Food Science",
     authorBio: "Food scientist and culinary educator with a PhD in Food Chemistry.",
-    authorImage: "/api/placeholder/100/100",
+    authorImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
     date: "2024-01-10",
     readTime: "6 min read",
     category: "Food Science",
@@ -114,7 +114,7 @@ export const mockBlogPosts = [
       {
         id: 1,
         author: "PastaPerfectionist",
-        authorImage: "/api/placeholder/50/50",
+        authorImage: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=50&h=50&fit=crop&crop=face",
         content: "I never knew about the starch connection! This explains why my sauces never stuck properly before.",
         date: "2024-01-11",
         likes: 8,
@@ -144,10 +144,10 @@ export const mockBlogPosts = [
       <h2>Cooking Techniques</h2>
       <p>Winter vegetables shine when roasted, braised, or slow-cooked. These methods bring out their natural sweetness and create comforting, warming dishes perfect for cold days.</p>
     `,
-    image: "/api/placeholder/800/400",
+    image: "https://images.unsplash.com/photo-1506368249639-73a05d6f6488?w=800&h=400&fit=crop",
     author: "Seasonal Chef Tom",
     authorBio: "Farm-to-table chef specializing in seasonal and sustainable cooking practices.",
-    authorImage: "/api/placeholder/100/100",
+    authorImage: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face",
     date: "2024-01-05",
     readTime: "7 min read",
     category: "Seasonal Cooking",
@@ -162,6 +162,57 @@ export const mockBlogPosts = [
     },
     relatedRecipes: [3],
     commentsList: []
+  },
+  {
+    id: 4,
+    title: "Mastering the Art of Bread Making",
+    excerpt: "From understanding yeast to achieving the perfect crust, learn the fundamentals of baking artisan bread at home.",
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&h=400&fit=crop",
+    author: "Baker Sarah",
+    authorBio: "Professional baker and bread-making instructor with 12 years of experience.",
+    authorImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+    date: "2024-01-20",
+    readTime: "12 min read",
+    category: "Baking",
+    tags: ["bread", "baking", "yeast", "artisan"],
+    views: 2890,
+    likes: 198,
+    comments: 34,
+    featured: false
+  },
+  {
+    id: 5,
+    title: "Spice Blending 101: Creating Your Own Signature Mixes",
+    excerpt: "Learn the art of combining spices to create unique flavor profiles that will elevate your cooking to the next level.",
+    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&h=400&fit=crop",
+    author: "Spice Master Ahmed",
+    authorBio: "Third-generation spice merchant and cookbook author specializing in Middle Eastern and Indian cuisines.",
+    authorImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+    date: "2024-01-18",
+    readTime: "9 min read",
+    category: "Ingredients",
+    tags: ["spices", "seasoning", "flavor", "blending"],
+    views: 1650,
+    likes: 124,
+    comments: 28,
+    featured: true
+  },
+  {
+    id: 6,
+    title: "Kitchen Equipment Essentials for Beginners",
+    excerpt: "Building your first kitchen? Here's everything you need to know about choosing the right tools without breaking the bank.",
+    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop",
+    author: "Kitchen Expert Lisa",
+    authorBio: "Culinary school instructor and kitchen consultant helping home cooks optimize their cooking spaces.",
+    authorImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
+    date: "2024-01-12",
+    readTime: "10 min read",
+    category: "Kitchen Tools",
+    tags: ["equipment", "kitchen", "beginner", "tools"],
+    views: 3200,
+    likes: 167,
+    comments: 45,
+    featured: false
   }
 ];
 
@@ -233,7 +284,7 @@ export const featuredAuthors = [
     id: 1,
     name: "Chef Maria Rodriguez",
     bio: "Head chef with 15 years of culinary experience, specializing in technique education.",
-    image: "/api/placeholder/150/150",
+    image: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=150&h=150&fit=crop&crop=face",
     specialties: ["Techniques", "Mediterranean Cuisine"],
     postCount: 23,
     social: {
@@ -245,7 +296,7 @@ export const featuredAuthors = [
     id: 2,
     name: "Dr. Food Science",
     bio: "Food scientist and culinary educator with a PhD in Food Chemistry.",
-    image: "/api/placeholder/150/150",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     specialties: ["Food Science", "Baking"],
     postCount: 18,
     social: {
@@ -257,7 +308,7 @@ export const featuredAuthors = [
     id: 3,
     name: "Seasonal Chef Tom",
     bio: "Farm-to-table chef specializing in seasonal and sustainable cooking practices.",
-    image: "/api/placeholder/150/150",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
     specialties: ["Seasonal Cooking", "Sustainability"],
     postCount: 15,
     social: {
